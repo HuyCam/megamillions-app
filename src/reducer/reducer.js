@@ -1,10 +1,31 @@
-const reducer = (state = [], action) => {
+import {mode} from '../actions/actions';
+import { combineReducers } from 'redux';
+
+
+
+const data = (state = [], action) => {
     switch(action.type) {
         case 'DATA':
-            return { data: action.data }
+            return action.data;
         default: 
-            return { data: state }
+            return state
     }
 }
 
-export default reducer;
+const switchMode = (state = mode.FULL, action) => {
+    switch(action.type) {
+        case mode.FULL:
+        case mode.RANGE50:
+        case mode.RANGE100:
+            return action.type;
+        default:
+            return state;
+    }
+}
+
+const Reducer = combineReducers({
+    data: data,
+    currentMode: switchMode
+})
+
+export default Reducer;

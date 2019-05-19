@@ -2,17 +2,17 @@ import React, { Component } from 'react';
 import request from 'request';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import fetchData from '../actions/actions';
-// import canvas
-import CanvasJSReact from '../components/canvasjs.react';
 
 // import action
+import { fetchData } from '../actions/actions';
+// import canvas
+import CanvasJSReact from '../components/canvasjs.react';
 
 
 class Body extends Component {
     componentDidMount() {
         const options = {
-            url: 'http://localhost:5000/sorted-report',
+            url: 'http://localhost:5000/sorted-gold-ball-report',
             headers: {
               'Access-Control-Allow-Origin': '*',
             }
@@ -38,7 +38,15 @@ class Body extends Component {
     
     // this return data to dataPoint for the graph to render
     integrateData() {
-       const dataPoint = this.props.data.map( data => {
+        const filteredData = this.props.data.filter((data, index) => {
+            if ( index < 10) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+
+       const dataPoint = filteredData.map( data => {
            return {
                y: data.times,
                label: data.number
@@ -49,9 +57,11 @@ class Body extends Component {
     }
    
     render() {
+        console.log(this.props.state);
         const { CanvasJSChart } = CanvasJSReact;
         // canvast option
         const canvasOptions = {
+            height: 700,
             animationEnabled: true,
             theme: "light2",
             title:{
@@ -64,6 +74,7 @@ class Body extends Component {
             },
             axisX: {
                 reversed: true,
+                interval: 1
 			},
             data: [{
                 type: "bar",
@@ -72,11 +83,11 @@ class Body extends Component {
         }
         return (
             <div>
-                <h3>Body goes here</h3>
-
+                <div className="canvas">
                 <CanvasJSChart options = {canvasOptions}
 				/* onRef={ref => this.chart = ref} */
 			    />
+                </div>
             </div>
         )
     }
@@ -84,7 +95,8 @@ class Body extends Component {
 
 const mapStateToProp = (state) => {
     return {
-        data: state.data
+        data: state.data,
+        state: state
     }
 };
 
